@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div class="container mx-auto">
+        <h1 class="text-3xl font-bold underline" id="welcome">
+          Hello, 
+        </h1>
+    </div>
+    <p id="error"></p>
+    <br>
+        Pemilik: <div id="pemilik"></div>
+        rawText: <div id="rawText"></div>
+        angka: <div id="angka"></div>
+    <br>
+    <!-- refresh data -->
+    <button onclick="loadData()" class="px-6 py-2 text-sm transition-colors duration-300 border-2 rounded-full shadow-xl text-cyan-500 border-cyan-400 shadow-cyan-300/30 hover:bg-cyan-500 hover:text-cyan-100"> loadData </button>
+    <br>
+    <br>
+    <input type="text" id="textRaw" placeholder="Text Raw">
+    <button onclick="setText()" class="px-6 py-2 text-sm transition-colors duration-300 border-2 rounded-full shadow-xl text-cyan-500 border-cyan-400 shadow-cyan-300/30 hover:bg-cyan-500 hover:text-cyan-100"> set Text </button>
+    <br>
+    <br>
+    <button onclick="incrementContract()" class="px-6 py-2 text-sm transition-colors duration-300 border-2 rounded-full shadow-xl text-cyan-500 border-cyan-400 shadow-cyan-300/30 hover:bg-cyan-500 hover:text-cyan-100"> Increment </button>
+    <br>
+    <br>
+    <br>
+
+    <div id="wallet">
+        <button class="px-6 py-2 text-sm transition-colors duration-300 border-2 rounded-full shadow-xl text-cyan-500 border-cyan-400 shadow-cyan-300/30 hover:bg-cyan-500 hover:text-cyan-100"
+        onclick="connect()">
+            connect wallet
+        </button>
+    </div>
+</body>
+<!-- dari ether.js, kayak expo tapi buat blockchain "https://docs.ethers.org/v5/" -->
+<script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
+<!-- bikin sendiri abi.js -->
+<script src="abi.js"></script> 
+
+<!-- scriptnya  -->
+<script>
+    // https://docs.ethers.org/v5/getting-started/#installing
+    let provider
+    let account
+    let ytContract
+    let test
+
+    async function connect(){
+        await ethereum.request({ method: 'eth_requestAccounts' }); 
+        provider = new ethers.providers.Web3Provider(window.ethereum); // connect ke metamask, ada di docs ether js
+        test = await provider.getSigner() // dapetin data dari user yang intract smart contract nya
+        console.log(test, ">>>>>>>>>");
+
+        account = await provider.getSigner().getAddress() // dapetin address yang intractnya
+        document.getElementById("welcome").innerText += account;
+        document.getElementById("wallet").classList.add("invisible");
+
+        // npx hardhat run scripts/testPertamaCuy-readPemilik.js --network localhos = Deployed_Addresses
+        // ytContract = new ethers.Contract(Deployed_Addresses, abi, provider)
+        ytContract = new ethers.Contract("0x5FbDB2315678afecb367f032d93F642f64180aa3", abi, provider) // Connecting to the DAI Contract, ada 3 variable
+
+        console.log(ytContract, "????");
+        // console.log(await ytContract.getPemilik(), "????");
+        await loadData()
+    }
+    // ! PASTIKAN JARINGANNYA SAMA, WHICH MEAN LOCAL ETH
+
+    async function loadData(){
+        try {
+            document.getElementById("pemilik").innerText = await ytContract.getPemilik() 
+            document.getElementById("rawText").innerText = await ytContract.textIki()
+            document.getElementById("angka").innerText = await ytContract.angka()
+        } catch (error) {
+            console.error("Error calling getPemilik:", error)
+            document.getElementById("error").innerText = "Error: " + error.message
+        }
+    }
+
+
+    async function setText() {
+        const textValue = document.getElementById("textRaw").value // input data baru
+        const yt = await ytContract.connect(await provider.getSigner()) // connect user yang ke smart contract
+        console.log(yt, "!?@?!@?!?");
+        await yt.setTextIki(textValue) // set text nya
+        await loadData() // refresh data
+    }
+
+    // cuman bisa yang punya contract nya
+    async function incrementContract() {
+        const yt = await ytContract.connect(await provider.getSigner()) // connect user yang ke smart contract
+        await yt.increment() // increment nya
+        await loadData() // refresh data
+    }
+    window.addEventListener('load', async () => {}) // harus di refresh vanh
+</script>
+
+</html>
