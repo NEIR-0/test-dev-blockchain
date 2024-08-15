@@ -96,6 +96,55 @@ async function incrementContract() {
 }
 ```
 
+## Final Deploy to erc20 sepolia
+### SET UP SEPOLIA
+- 1. buat env sesuai example nya
 
+- 2. tambahin hardhat confignya:
+```js
+require("@nomicfoundation/hardhat-toolbox"); // dari had hat jadi gak perlu donwload lagi
+require("dotenv").config(); // ini install "npm i dotenv"
+
+/** @type import('hardhat/config').HardhatUserConfig */
+module.exports = {
+  solidity: "0.8.24",
+  networks: {
+    sepolia: {
+      url: process.env.SEPOLIA_URL, // cek inv 
+      accounts: [process.env.PRIVATE_KEY], // cek inv 
+    },
+  },
+};
+```
+
+- 3. buat contractnya, contoh:
+```js
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.24;
+
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol"; // donwloaad dulu "npm i @openzeppelin/contracts atau npm install @openzeppelin/contracts-upgradeable (dari 'https://docs.openzeppelin.com/contracts/4.x/upgradeable')"
+
+contract MyToken is ERC20 { // initial tambahin
+    constructor(uint256 initialSupply) ERC20("piscokMama", "PKM") { // disini juga
+        _mint(msg.sender, initialSupply);
+    }
+}
+```
+
+### COMMAND DEPLOYNYA
+```js
+npx hardhat compile // keknya optional dah
+npx hardhat ignition deploy ignition/modules/nama_files.js --network sepolia // networknya sepolia
+```
+
+### LINK YANG MENDUKUNG
+- https://faucets.chain.link/ (buat free faucet butuh github) 
+- https://www.infura.io/ (buat dapetin link sepolia nya)
+- sepolia.etherscan.io (buat cek contract nya dah di deploy atau enggak)
+- https://docs.openzeppelin.com/contracts/5.x/ (buat docs ERC nya)
+
+## DOCUMENTASI NYA JANGAN LUPE EHEHEH
+![alt text](image.png)
+# PISCOK MAMA CUYY?!?!!
 
 ### setiap perubahan harus di refresh
