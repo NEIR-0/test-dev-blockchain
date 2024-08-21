@@ -17,7 +17,7 @@
 # SetUp Metamask:
  *dapat alamat nya dari jalanin command "npx hardhat node"
     - nama jaringan     = localhost::8545
-    - URL RPC Baru      = http://127.0.0.1:8545/
+    - URL RPC Baru      = http://127.0.0.1:8545
     - ID chain          = 31337
     - Simbol mata uang  = ETH
 
