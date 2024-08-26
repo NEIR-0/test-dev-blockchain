@@ -36,6 +36,17 @@
             connect wallet
         </button>
     </div>
+    <br>
+    <br>
+    <div class="container mx-auto">
+        <h1 class="text-3xl font-bold underline" id="balance">
+          balance, 
+        </h1>
+    </div>
+    <h1 id="wd"></h1>
+    <button class="px-6 py-2 text-sm transition-colors duration-300 border-2 rounded-full shadow-xl text-cyan-500 border-cyan-400 shadow-cyan-300/30 hover:bg-cyan-500 hover:text-cyan-100" onclick="checkBalance()">check balance</button>
+    <button class="px-6 py-2 text-sm transition-colors duration-300 border-2 rounded-full shadow-xl text-cyan-500 border-cyan-400 shadow-cyan-300/30 hover:bg-cyan-500 hover:text-cyan-100" onclick="deposit()">depo</button>
+    <button class="px-6 py-2 text-sm transition-colors duration-300 border-2 rounded-full shadow-xl text-cyan-500 border-cyan-400 shadow-cyan-300/30 hover:bg-cyan-500 hover:text-cyan-100" onclick="withdraw()">wd</button>
 </body>
 <!-- dari ether.js, kayak expo tapi buat blockchain "https://docs.ethers.org/v5/" -->
 <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
@@ -63,8 +74,8 @@
         // npx hardhat run scripts/testPertamaCuy-readPemilik.js --network localhos = Deployed_Addresses
         // ytContract = new ethers.Contract(Deployed_Addresses, abi, provider)
         ytContract = new ethers.Contract("0x5FbDB2315678afecb367f032d93F642f64180aa3", abi, provider) // Connecting to the DAI Contract, ada 3 variable
-
-        console.log(ytContract, "????");
+        console.log(ytContract, ">>>>>>>>>>>>>?????");
+        
         // console.log(await ytContract.getPemilik(), "????");
         await loadData()
     }
@@ -74,6 +85,7 @@
         try {
             document.getElementById("pemilik").innerText = await ytContract.getPemilik() 
             document.getElementById("rawText").innerText = await ytContract.textIki()
+            document.getElementById("angka").innerText = await ytContract.angka()
             document.getElementById("angka").innerText = await ytContract.angka()
         } catch (error) {
             console.error("Error calling getPemilik:", error)
@@ -96,7 +108,55 @@
         await yt.increment() // increment nya
         await loadData() // refresh data
     }
+
+    async function checkBalance(){
+        const yt = await ytContract.connect(await provider.getSigner()) // connect user yang ke smart contract
+        const balance = await yt.showBalanceInAddress() // increment nya
+        document.getElementById("balance").innerText = balance;
+        await loadData() // refresh data
+    }
+
+    async function deposit(){
+        const yt = await ytContract.connect(await provider.getSigner()) // connect user yang ke smart contract
+        const balance = await yt.deposit({
+            value: ethers.utils.parseEther("11") // 11 eth
+        });
+        document.getElementById("balance").innerText = balance;
+        await loadData() // refresh data
+    }
+
+    async function withdraw(){
+        try {
+            const yt = await ytContract.connect(await provider.getSigner());
+            const tx = await yt.withdrawAll();
+            await tx.wait(); // Wait for the transaction to be mined
+            const receipt = await provider.getTransactionReceipt(tx.hash);
+            
+            if (receipt.status === 1) {
+                document.getElementById("wd").innerText = "Withdrawal successful";
+            } else {
+                document.getElementById("wd").innerText = "Withdrawal failed";
+            }
+        } catch (error) {
+            console.error("Withdrawal error:", error);
+            document.getElementById("wd").innerText = "Withdrawal error: " + error.message;
+        }
+        await loadData(); // Refresh data
+    }
+    
     window.addEventListener('load', async () => {}) // harus di refresh vanh
 </script>
 
 </html>
+
+<!-- Account #16: 0x2546BcD3c84621e976D8185a91A922aE77ECEc30 (10000 ETH)
+Private Key: 0xea6c44ac03bff858b476bba40716402b03e41b8e97e276d1baec7c37d42484a0
+
+Account #17: 0xbDA5747bFD65F08deb54cb465eB87D40e51B197E (10000 ETH)
+Private Key: 0x689af8efa8c651a91ad287602527f3af2fe9f6501a7ac4b061667b5a93e037fd
+
+Account #18: 0xdD2FD4581271e230360230F9337D5c0430Bf44C0 (10000 ETH)
+Private Key: 0xde9be858da4a475276426320d5e9262ecfc3ba460bfac56360bfa6c4c28b4ee0
+
+Account #19: 0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199 (10000 ETH)
+Private Key: 0xdf57089febbacf7ba0bc227dafbffa9fc08a93fdc68e1e42411a14efcf23656e -->

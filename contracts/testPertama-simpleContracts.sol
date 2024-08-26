@@ -5,10 +5,24 @@ contract testPertamaCuy {
     string public textIki;
     address public owner;
     uint256 public angka;
+    uint public toalBalance;
 
     constructor () {
         owner = msg.sender;
     }   
+
+    function deposit() public payable {
+        toalBalance+=msg.value;
+    }
+    
+    function withdrawAll() public {
+        address payable walletUser = payable(msg.sender);
+        walletUser.transfer(toalBalance);
+    }
+
+    function showBalanceInAddress() public view returns (uint)  {
+        return address(this).balance;
+    }
 
     function setTextIki(string calldata _text) external {
         textIki = _text;
