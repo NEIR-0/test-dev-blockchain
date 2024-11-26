@@ -15,9 +15,15 @@ contract testPertamaCuy {
         toalBalance+=msg.value;
     }
     
-    function withdrawAll() public {
+    function withdrawAll() public returns (uint) {
+        require(toalBalance > 0, "No funds available for withdrawal");
         address payable walletUser = payable(msg.sender);
         walletUser.transfer(toalBalance);
+
+        uint withdrawnAmount = toalBalance;
+        toalBalance = 0; // Reset toalBalance after withdrawal
+
+        return withdrawnAmount; // Return the withdrawn amount
     }
 
     function showBalanceInAddress() public view returns (uint)  {

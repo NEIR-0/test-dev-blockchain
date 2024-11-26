@@ -129,8 +129,10 @@
         try {
             const yt = await ytContract.connect(await provider.getSigner());
             const tx = await yt.withdrawAll();
+            console.log(tx, ">>>>>>>>");
             await tx.wait(); // Wait for the transaction to be mined
             const receipt = await provider.getTransactionReceipt(tx.hash);
+            console.log(receipt, "????????????");
             
             if (receipt.status === 1) {
                 document.getElementById("wd").innerText = "Withdrawal successful";
