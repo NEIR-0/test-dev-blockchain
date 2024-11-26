@@ -26,7 +26,7 @@
  contoh: "testPertama-pengenalan.js"
 
 
-## Day 1
+## Day 2
 # setUp Frontend:
 - buat abi.js, dapat data abinya dapet dari ./ignition/deployments/chain-31337/artifactsTestGwIni#testPertamaCuy.dbg.json / nama file contract nya
 - connect ether js, ES3 (UMD) in the Browser / ES6 in the Browser
